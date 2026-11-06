@@ -1,0 +1,116 @@
+# NOTICE
+
+BandTok — "Modeling Music as a Time-Frequency Image: A 2D Tokenizer for Music Generation"
+
+Copyright (c) 2026 The BandTok Authors. Released under the MIT License (see `LICENSE`).
+
+The configuration system, dataset pipeline, distributed trainer, tokenizer/LM training
+loops, evaluation and inference scripts are original work by the BandTok authors.
+
+Parts of the *model and loss* code are derived from earlier open-source work.
+Those parts remain under their original licenses and copyrights, and are listed below
+together with the files that contain them. License texts are in `LICENSES/`.
+
+---
+
+## Derived model / loss code
+
+### stable-audio-tools — MIT License
+- Upstream: https://github.com/Stability-AI/stable-audio-tools
+- Copyright (c) 2023 Stability AI, Copyright (c) 2024 Yukara Ikemiya
+- License text: `LICENSES/LICENSE.stable-audio-tools.txt`
+- Used in:
+  - `bandtok/modules/quantize.py` — `Bottleneck` / `DiscreteBottleneck` base classes
+  - `bandtok/models/conditioners.py` — conditioner base class and T5/number conditioners
+  - `bandtok/models/lm.py` — conditioning-prefix structure and CFG-dropout training
+  - `bandtok/losses/base.py` — loss-module container classes
+  - `bandtok/training/optim.py` — `InverseLR` schedule and optimizer/scheduler factories
+
+### NVIDIA Cosmos Tokenizer — Apache License 2.0
+- Upstream: https://github.com/NVIDIA/Cosmos-Tokenizer
+- Copyright (c) 2024 NVIDIA CORPORATION
+- License text: `LICENSES/LICENSE.apache-2.0.txt`
+- Used in:
+  - `bandtok/modules/cosmos.py` — the 2D encoder/decoder towers
+  - `bandtok/modules/patching.py` — Haar wavelet patcher / unpatcher
+
+  Cosmos in turn credits CompVis latent-diffusion (https://github.com/CompVis/latent-diffusion)
+  for the ResNet/attention block layout; those credits are retained in the file headers.
+
+### BigVGAN (v2) — MIT License
+- Upstream: https://github.com/NVIDIA/BigVGAN
+- Copyright (c) 2024 NVIDIA CORPORATION
+- License text: `third_party/bigvgan/LICENSE`, `LICENSES/LICENSE.nvidia-bigvgan.txt`
+- Used in:
+  - `third_party/bigvgan/` — vendored inference code for the frozen vocoder, unmodified.
+    Only the files needed to build and run the generator are included; the per-file
+    third-party notices shipped by BigVGAN are preserved in
+    `third_party/bigvgan/incl_licenses/`.
+  - `bandtok/modules/mel.py` — the log-Mel front end follows the HiFi-GAN/BigVGAN
+    reference transform, so that decoded spectrograms are vocoder-compatible.
+
+  Pretrained vocoder weights (`nvidia/bigvgan_v2_44khz_128band_512x`) are downloaded from
+  the Hugging Face Hub at runtime and are covered by NVIDIA's model license, not by this
+  repository's license.
+
+### auraloss — Apache License 2.0
+- Upstream: https://github.com/csteinmetz1/auraloss
+- Copyright (c) Christian J. Steinmetz
+- License text: `LICENSES/LICENSE.apache-2.0.txt`
+- Used in:
+  - `bandtok/losses/spectral.py` — STFT / multi-resolution-STFT / Mel-STFT distances,
+    used for the reconstruction metrics reported in the paper.
+
+### vgg_loss — MIT License
+- Upstream: https://github.com/crowsonkb/vgg_loss
+- Copyright (c) 2021 Katherine Crowson
+- License text: `LICENSES/LICENSE.vgg-loss.txt`
+- Used in:
+  - `bandtok/losses/perceptual.py` — VGG feature extraction for the perceptual loss
+    (adapted to treat a log-Mel spectrogram as a single-channel image).
+
+### audiocraft — MIT License
+- Upstream: https://github.com/facebookresearch/audiocraft
+- Copyright (c) Meta Platforms, Inc. and affiliates
+- License text: `LICENSES/LICENSE.audiocraft.txt`
+- Used in:
+  - `bandtok/models/conditioners.py` — conditioner interface, which stable-audio-tools
+    itself credits to audiocraft
+  - `bandtok/models/lm.py` — the classifier-free-guidance formulation (a near-null
+    conditioning prefix during training, guided logits at inference), following MusicGen
+
+### Hugging Face Transformers — Apache License 2.0
+- Upstream: https://github.com/huggingface/transformers
+- Copyright (c) The HuggingFace Inc. team
+- License text: `LICENSES/LICENSE.apache-2.0.txt`
+- Used in:
+  - `bandtok/models/lm.py` — the language model is a `LlamaForCausalLM` backbone whose
+    `LlamaModel.forward` is replaced by BandTok variants adapted from the upstream
+    implementation, and 2D RoPE reuses `Qwen3VLTextRotaryEmbedding` (interleaved MRoPE)
+    from the Qwen3-VL modelling code.
+
+---
+
+## Methods credited but not copied
+
+The following works are implemented following their papers; no source code from them
+is included here.
+
+- PatchGAN discriminator — Isola et al., "Image-to-Image Translation with Conditional
+  Adversarial Networks", CVPR 2017 (`bandtok/losses/discriminators.py`).
+- MelGAN / HiFi-GAN / DAC — multi-scale discriminator and feature-matching training
+  scheme (`bandtok/losses/discriminators.py`).
+- MelTok (formerly MelCap) — Li et al., "MelTok: 2D Tokenization for Single-Codebook Audio
+  Compression", arXiv:2510.01903, 2025 (https://arxiv.org/abs/2510.01903). The
+  Mel-spectrogram single-codebook 2D tokenizer architecture that BandTok's tokenizer
+  follows (`bandtok/models/tokenizer.py`, `bandtok/modules/quantize.py`,
+  `bandtok/modules/patching.py`).
+- Qwen3-VL — Interleaved-MRoPE, the basis of BandTok's 2D RoPE.
+- T5 — Raffel et al., text encoder used for caption conditioning
+  (weights fetched from the Hugging Face Hub at runtime).
+
+## Datasets
+
+The datasets used in the paper (FMA, Freesound, MTG-Jamendo, MUSDB18-HQ,
+SongDescriber) are distributed by their respective authors under their own terms and are
+not included in this repository. See `docs/DATA.md`.

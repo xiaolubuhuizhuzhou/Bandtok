@@ -1,0 +1,27 @@
+{
+  "dataset_type": "audio_manifest",
+  "random_crop": true,
+  "drop_short": true,
+  "datasets": [
+    {
+      "id": "mtg_jamendo",
+      "manifest": "data/manifests/mtg_jamendo.jsonl",
+      "root": "/path/to/mtg-jamendo/audio"
+    },
+    {
+      "id": "fma",
+      "manifest": "data/manifests/fma.jsonl",
+      "root": "/path/to/fma_full"
+    },
+    {
+      "id": "freesound",
+      "manifest": "data/manifests/freesound.jsonl",
+      "root": "/path/to/freesound"
+    },
+    {
+      "id": "musdb",
+      "manifest": "data/manifests/musdb18hq_train.jsonl",
+      "root": "/path/to/musdb18hq/train"
+    }
+  ]
+}

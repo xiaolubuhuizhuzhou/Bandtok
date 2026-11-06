@@ -1,0 +1,124 @@
+{
+  "model_type": "bandtok_lm",
+  "sample_rate": 44100,
+  "sample_size": 441000,
+  "audio_channels": 1,
+  "model": {
+    "pretransform": {
+      "type": "bandtok",
+      "config": {
+        "model_config": "configs/tokenizer/bandtok.json",
+        "ckpt_path": "ckpts/bandtok.pt"
+      }
+    },
+    "conditioning": {
+      "configs": [
+        {
+          "id": "caption",
+          "type": "t5",
+          "config": {
+            "t5_model_name": "t5-base",
+            "max_length": 125,
+            "enable_grad": false,
+            "output_dim": 1536
+          }
+        },
+        {
+          "id": "seconds_start",
+          "type": "number",
+          "config": {
+            "output_dim": 1536,
+            "min_val": 0,
+            "max_val": 512
+          }
+        },
+        {
+          "id": "seconds_total",
+          "type": "number",
+          "config": {
+            "output_dim": 1536,
+            "min_val": 0,
+            "max_val": 512
+          }
+        }
+      ],
+      "cond_dim": 1536
+    },
+    "lm": {
+      "type": "llama",
+      "prepend_cond_ids": [
+        "caption",
+        "seconds_start",
+        "seconds_total"
+      ],
+      "config": {
+        "hidden_size": 1536,
+        "num_hidden_layers": 32,
+        "num_attention_heads": 16,
+        "intermediate_size": 8192,
+        "head_dim": 96,
+        "vocab_size": 8200,
+        "prepend_cond_dim": 1536,
+        "attn_implementation": "flash_attention_2",
+        "hidden_act": "silu",
+        "torch_dtype": "bfloat16",
+        "use_cache": false,
+        "attention_dropout": 0.2,
+        "rope_2d": {
+          "rope_scaling": {
+            "mrope_interleaved": true,
+            "mrope_section": [
+              24,
+              20,
+              20
+            ],
+            "rope_type": "default"
+          },
+          "rope_theta": 10000,
+          "max_position_embeddings": 10000,
+          "head_dim": 96
+        }
+      }
+    }
+  },
+  "training": {
+    "precision": "bf16-mixed",
+    "cfg_dropout_prob": 0.1,
+    "clip_grad_norm": 0.0,
+    "optimizer_configs": {
+      "lm": {
+        "optimizer": {
+          "type": "AdamW",
+          "config": {
+            "lr": 5e-05,
+            "betas": [
+              0.9,
+              0.95
+            ],
+            "weight_decay": 0.0
+          }
+        },
+        "scheduler": {
+          "type": "InverseLR",
+          "config": {
+            "inv_gamma": 1000000,
+            "power": 0.5,
+            "warmup": 0.999
+          }
+        }
+      }
+    },
+    "logging": {
+      "log_every": 20
+    },
+    "checkpoint": {
+      "every_n_train_steps": 40000,
+      "keep_last_k": 5
+    },
+    "val_every": 10000,
+    "val_steps": 50,
+    "demo": {
+      "demo_every": 0
+    }
+  }
+}

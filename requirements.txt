@@ -1,0 +1,27 @@
+# Core requirements for training and inference.
+# Install with:  pip install -r requirements.txt
+# (or `pip install -e .` to install the bandtok package itself)
+
+torch>=2.1
+torchaudio>=2.1
+torchvision>=0.16
+transformers>=4.45
+librosa>=0.10
+soundfile>=0.12
+numpy>=1.23
+scipy>=1.10
+einops>=0.7
+safetensors>=0.4
+huggingface-hub>=0.23
+sentencepiece>=0.1.99
+tqdm>=4.65
+matplotlib>=3.7      # imported by the vendored BigVGAN utils, and used for analysis plots
+
+# Optional: metric logging
+wandb>=0.16
+tensorboard>=2.14
+
+# Optional but recommended for LM training throughput on Ampere/Hopper GPUs.
+# The LM configs request attn_implementation="flash_attention_2"; without this
+# package Transformers falls back to SDPA attention.
+# flash-attn>=2.5

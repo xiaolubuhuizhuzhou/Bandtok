@@ -1,0 +1,12 @@
+{
+  "dataset_type": "audio_manifest",
+  "random_crop": true,
+  "drop_short": true,
+  "datasets": [
+    {
+      "id": "mtg_jamendo_instrumental",
+      "manifest": "data/manifests/mtg_jamendo_instrumental.jsonl",
+      "root": "/path/to/mtg-jamendo/instrumental"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "dataset_type": "audio_manifest",
+  "random_crop": false,
+  "drop_short": true,
+  "datasets": [
+    {
+      "id": "songdescriber",
+      "manifest": "data/manifests/songdescriber.jsonl",
+      "root": "/path/to/song-describer/audio"
+    }
+  ]
+}

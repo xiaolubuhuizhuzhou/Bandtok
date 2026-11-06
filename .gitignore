@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.venv/
+venv/
+
+# Training artifacts
+runs/
+ckpts/*
+!ckpts/README.md
+checkpoints/
+outputs/
+wandb/
+events.out.tfevents.*
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+logs/
+results/
+
+# Eval outputs: generated audio, metric caches and per-run logs
+eval/cache/
+eval/gen_*/
+eval/logs_metrics/
+eval/results_local*/
+eval/norm*/
+eval/smoke_*/
+smoke_*.csv
+
+# Data: audio and generated samples stay out of the repo; real manifests hold
+# machine-specific paths, so only the format example is committed
+data/*
+!data/manifests/
+data/manifests/*
+!data/manifests/example.jsonl
+*.wav
+*.flac
+*.mp3
+*.npy
+
+# Machine-specific configs (real dataset paths for a local run)
+*.local.json
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
+docs/
+tests/
+third_party/
+eval/

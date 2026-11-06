@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bandtok"
+version = "0.1.0"
+description = "BandTok: a 2D Mel-spectrogram tokenizer and autoregressive music language model"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "The BandTok Authors" }]
+keywords = ["music generation", "audio tokenizer", "neural audio codec", "language model"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Multimedia :: Sound/Audio :: Analysis",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+  "torch>=2.1",
+  "torchaudio>=2.1",
+  "torchvision>=0.16",       # VGG features for the perceptual loss
+  "transformers>=4.45",      # Llama backbone + Qwen3-VL interleaved MRoPE
+  "librosa>=0.10",           # Mel filterbank
+  "soundfile>=0.12",
+  "numpy>=1.23",
+  "scipy>=1.10",
+  "einops>=0.7",
+  "safetensors>=0.4",
+  "huggingface-hub>=0.23",   # BigVGAN vocoder weights
+  "sentencepiece>=0.1.99",   # T5 tokenizer
+  "tqdm>=4.65",
+  "matplotlib>=3.7",     # imported at module level by the vendored BigVGAN utils
+]
+
+[project.optional-dependencies]
+logging = ["wandb>=0.16", "tensorboard>=2.14"]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+
+[project.urls]
+Homepage = "https://github.com/xiaolubuhuizhuzhou/Bandtok"
+Demos = "https://xiaolubuhuizhuzhou.github.io/bandtok_demo/"
+
+[tool.setuptools.packages.find]
+include = ["bandtok*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+# The vendored model code (Cosmos, auraloss, PatchGAN) keeps its upstream style.
+ignore = ["E741"]
+
+[tool.ruff.lint.per-file-ignores]
+"bandtok/modules/cosmos.py" = ["E501"]
+"bandtok/modules/patching.py" = ["E501"]
+"bandtok/modules/quantize.py" = ["E501"]
+# Vendored auraloss code, kept verbatim so the metrics stay comparable.
+"bandtok/losses/spectral.py" = ["E501", "E711", "E722", "F541"]
+"third_party/*" = ["ALL"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::FutureWarning", "ignore::UserWarning"]

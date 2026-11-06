@@ -1,0 +1,12 @@
+{
+  "dataset_type": "audio_manifest",
+  "random_crop": true,
+  "drop_short": true,
+  "datasets": [
+    {
+      "id": "musdb_test",
+      "manifest": "data/manifests/musdb18hq_test.jsonl",
+      "root": "/path/to/musdb18hq/test"
+    }
+  ]
+}
